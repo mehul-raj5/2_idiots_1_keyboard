@@ -3,12 +3,14 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
+	"net"
 	"os"
 
 	"golang.org/x/term"
 )
 
-func takeinput() {
+func takeinput(conn net.Conn) {
 
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
@@ -26,9 +28,11 @@ func takeinput() {
 	for {
 		temp, _, _ := r.ReadRune()
 		if temp == '=' {
-			break
+			conn.Close()
+			break;
 		}
 		outputRune = append(outputRune, temp)
+		fmt.Fprintf(conn, string(temp))
 
 	}
 	fmt.Println("\nYou typed: ", outputRune)
@@ -38,6 +42,11 @@ func takeinput() {
 }
 
 func main() {
-	fmt.Println("Hello, World!")
-	takeinput()
+	//con est
+	conn, err := net.Dial("tcp", "localhost:8080")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	takeinput(conn)
 }
