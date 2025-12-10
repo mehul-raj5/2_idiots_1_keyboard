@@ -1,47 +1,31 @@
 package main
 
 import (
-	// "bufio"
 	"fmt"
 	"log"
 	"net"
-	// "os"
-	// "golang.org/x/term"
 )
 
-func takeinput1(conn net.Conn) (int){
+func takeinput1(conn net.Conn) {
 	defer conn.Close()
 
-	for{
+	for {
 		buff := make([]byte, 64)
 		n, err := conn.Read(buff)
 		if err != nil {
-			log.Fatalln("gobar hogyi")
+			log.Println("connection closed", err)
+			return
 		}
 
-		fmt.Println(string(buff[:n]))
+		fmt.Print(string(buff[:n]))
 	}
-
-	// return 1;
 }
 
 func main() {
-	listen, err := net.Listen("tcp", "localhost:8080")
+	conn, err := net.Dial("tcp", "your-app-name.koyeb.app:8080")
 	if err != nil {
-		log.Fatalln("tatti hogyi")
+		log.Fatalln("cannot connect:", err)
 	}
 
-	defer listen.Close()
-
-	for {
-		conn, err := listen.Accept()
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		if(takeinput1(conn) == 1){
-			break;
-		}
-
-	}
+	takeinput1(conn)
 }

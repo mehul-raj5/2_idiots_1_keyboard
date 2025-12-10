@@ -29,7 +29,7 @@ func takeinput(conn net.Conn) {
 		temp, _, _ := r.ReadRune()
 		if temp == '=' {
 			conn.Close()
-			break;
+			break
 		}
 		outputRune = append(outputRune, temp)
 		fmt.Fprintf(conn, string(temp))
@@ -43,7 +43,7 @@ func takeinput(conn net.Conn) {
 
 func main() {
 	//con est
-	conn, err := net.Dial("tcp", "localhost:8080")
+	conn, err := net.Dial("tcp", "192.168.0.6:8080")
 	if err != nil {
 		log.Fatalln(err)
 	}
