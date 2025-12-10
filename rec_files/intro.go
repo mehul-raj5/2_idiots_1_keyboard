@@ -1,5 +1,7 @@
 package main
 
+//for WINDOWS sender
+
 import (
 	"bufio"
 	"fmt"
@@ -11,42 +13,38 @@ import (
 )
 
 func takeinput(conn net.Conn) {
-
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
 	}
-
-	// This GUARANTEES terminal returns to normal,
-	// even if your program panics or breaks.
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
-	//raw
 	r := bufio.NewReader(os.Stdin)
 
-	var outputRune []rune
 	for {
-		temp, _, _ := r.ReadRune()
-		if temp == '=' {
+		char, _, err := r.ReadRune()
+		if err != nil {
+			log.Println("Read error:", err)
+			break
+		}
+
+		if char == '=' {
 			conn.Close()
 			break
 		}
-		outputRune = append(outputRune, temp)
-		fmt.Fprintf(conn, string(temp))
 
+		fmt.Fprintf(conn, "%s", string(char))
 	}
-	fmt.Println("\nYou typed: ", outputRune)
-	fmt.Println()
-
-	//unraw
 }
 
 func main() {
-	//con est
-	conn, err := net.Dial("tcp", "192.168.0.6:8080")
+	conn, err := net.Dial("tcp", "xx:xx")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln("Connection failed:", err)
 	}
+	defer conn.Close()
 
+	fmt.Println("Connected! Typing here will reflect on the Mac.")
+	fmt.Println("Press '=' to exit.")
 	takeinput(conn)
 }
