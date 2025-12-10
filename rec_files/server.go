@@ -10,36 +10,28 @@ import (
 )
 
 func takeinput1(conn net.Conn) {
-	defer conn.Close()
 
-	// Use a small buffer for instant typing
 	buff := make([]byte, 128)
 
 	for {
-		// 1. Read data from the relay
 		n, err := conn.Read(buff)
 		if err != nil {
-			log.Println("Connection closed:", err)
-			return
+			continue
 		}
 
-		// 2. Convert to string
 		receivedData := string(buff[:n])
 
-		// 3. Process each character
 		for _, char := range receivedData {
 			strChar := string(char)
 
-			// Handle special keys
 			switch strChar {
-			case "\r", "\n": // Enter key
+			case "\r", "\n":
 				robotgo.KeyTap("enter")
 				fmt.Println("[Action] Enter")
-			case "\x7f", "\b": // Backspace
+			case "\x7f", "\b":
 				robotgo.KeyTap("backspace")
 				fmt.Println("[Action] Backspace")
 			default:
-				// Avoid typing newlines as text
 				if strings.TrimSpace(strChar) == "" && strChar != " " {
 					continue
 				}
@@ -51,8 +43,7 @@ func takeinput1(conn net.Conn) {
 }
 
 func main() {
-	// !!! REPLACE WITH YOUR CURRENT KOYEB ADDRESS !!!
-	serverAddress := "01.proxy.koyeb.app:14576"
+	serverAddress := "xx:xx"
 
 	fmt.Printf("Connecting to Receiver at %s...\n", serverAddress)
 	conn, err := net.Dial("tcp", serverAddress)

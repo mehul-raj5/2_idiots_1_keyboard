@@ -11,7 +11,6 @@ import (
 )
 
 func takeinput(conn net.Conn) {
-	// 1. Set terminal to Raw Mode (Captures keys instantly)
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
@@ -21,34 +20,35 @@ func takeinput(conn net.Conn) {
 	r := bufio.NewReader(os.Stdin)
 
 	for {
-		// 2. Read exact key press
 		char, _, err := r.ReadRune()
 		if err != nil {
+			log.Println("Read error:", err)
 			break
 		}
 
-		// 3. Exit safely on '='
 		if char == '=' {
+			conn.Close()
 			break
 		}
 
-		// 4. Send key to server
-		fmt.Fprintf(conn, "%s", string(char))
+		_, err = conn.Write([]byte(string(char)))
+		if err != nil {
+			log.Println("Connection lost:", err)
+			break
+		}
 	}
 }
 
 func main() {
-	// !!! REPLACE WITH YOUR CURRENT KOYEB ADDRESS !!!
-	serverAddress := "01.proxy.koyeb.app:14576"
+	serverAddress := "xx:xx"
 
+	fmt.Printf("Connecting to Relay at %s...\n", serverAddress)
 	conn, err := net.Dial("tcp", serverAddress)
 	if err != nil {
 		log.Fatalln("Connection failed:", err)
 	}
 	defer conn.Close()
 
-	fmt.Println("Connected! Press '=' to exit.")
-	fmt.Println("Start typing...")
-
+	fmt.Println("Connected! Start typing (Press '=' to exit)...")
 	takeinput(conn)
 }
