@@ -9,7 +9,8 @@ import (
 	"github.com/go-vgo/robotgo"
 )
 
-func takeinput1(conn net.Conn) {
+// reciever's code MAC ONLY
+func RecieveKeystrokes(conn net.Conn) {
 
 	buff := make([]byte, 128)
 
@@ -52,5 +53,5 @@ func main() {
 	}
 
 	fmt.Println("Connected! Waiting for Sender commands...")
-	takeinput1(conn)
+	RecieveKeystrokes(conn)
 }

@@ -10,7 +10,7 @@ import (
 	"golang.org/x/term"
 )
 
-func takeinput(conn net.Conn) {
+func SendKeystrokes(conn net.Conn) {
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		panic(err)
@@ -40,7 +40,7 @@ func takeinput(conn net.Conn) {
 }
 
 func main() {
-	serverAddress := "xx:xx"
+	serverAddress := "01.proxy.koyeb.app:13714"
 
 	fmt.Printf("Connecting to Relay at %s...\n", serverAddress)
 	conn, err := net.Dial("tcp", serverAddress)
@@ -50,5 +50,5 @@ func main() {
 	defer conn.Close()
 
 	fmt.Println("Connected! Start typing (Press '=' to exit)...")
-	takeinput(conn)
+	SendKeystrokes(conn)
 }
